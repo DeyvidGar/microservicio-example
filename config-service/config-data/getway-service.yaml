@@ -1,0 +1,43 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:mydb;NON_KEYWORDS=user
+    driverClassName: org.h2.Driver
+    username: sa
+    password: 
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enable: true
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+        - id: car-service
+          uri: lb://car-service
+          predicates:
+            - Path=/car/**
+        - id: moto-service
+          uri: lb://moto-service
+          predicates:
+            - Path=/moto/**
+
+server:
+  port:8080
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      default-zone: http://localhost:8761/eureka
+    instance:
+      instance-id: localhost
